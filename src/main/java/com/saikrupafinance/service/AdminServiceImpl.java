@@ -41,17 +41,8 @@ public class AdminServiceImpl  implements AdminService{
 		return adminRepository.findById(id);
 	}
 
-	@Override
-	public void deleteAllAdmins() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteSpecificAdmin(Long id) {
-		// TODO Auto-generated method stub
-		
-	}
+	
+	
 
 	
 }

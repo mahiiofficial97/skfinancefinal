@@ -16,8 +16,5 @@ public interface AdminService {
 
 	public  Optional<Admin> findById(Long id);
 
-	public  void deleteAllAdmins();
-
-	public  void deleteSpecificAdmin(Long id);
-
+	
 }

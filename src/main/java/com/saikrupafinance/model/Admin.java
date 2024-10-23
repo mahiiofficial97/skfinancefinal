@@ -38,6 +38,9 @@ public class Admin {
 	    @OneToMany(mappedBy = "admin") // Correctly mapped
 	    private Set<Client> clients; // Initialize with a Set if needed
 
-	
+	    // One Admin can create multiple Clients
+	    @OneToMany(mappedBy = "admin") // Correctly mapped
+	    private Set<Staff> staff; // Initialize with a Set if needed
+
 
 }

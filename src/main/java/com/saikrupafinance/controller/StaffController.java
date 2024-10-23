@@ -1,7 +1,6 @@
 package com.saikrupafinance.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +58,7 @@ public class StaffController {
 			response.setMessage("Session already expired or logged out");
 			response.setResult("failure");
 		} else {
-			session.removeAttribute("admininstance");
+			session.removeAttribute("staffinstance");
 			response.setStatus("200");
 			response.setMessage("Logout successfully");
 			response.setResult("success");
