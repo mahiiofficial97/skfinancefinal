@@ -2,21 +2,30 @@ package com.saikrupafinance.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import com.saikrupafinance.dto.ClientDto;
 import com.saikrupafinance.dto.StaffCreationRequest;
 import com.saikrupafinance.model.Admin;
+import com.saikrupafinance.model.Client;
 import com.saikrupafinance.model.JsonResponseclass;
 import com.saikrupafinance.model.Staff;
 import com.saikrupafinance.service.AdminServiceImpl;
+import com.saikrupafinance.service.ClientService;
 import com.saikrupafinance.service.StaffServiceImpl;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +40,9 @@ public class AdminController {
 	
 	@Autowired
 	StaffServiceImpl staffServiceImpl; 
+	
+	@Autowired
+	ClientService clientService; // Inject the client service
 
 	//create Admin
 		@PostMapping("/saveadmin")
@@ -59,7 +71,7 @@ public class AdminController {
 			return response;
 		}
 		
-		//update Admin
+	//update Admin
 		@PutMapping("/updateadmin")
 		public JsonResponseclass updateAdmin(@RequestBody Admin admin, HttpSession session) {
 		    JsonResponseclass response = new JsonResponseclass();
@@ -116,7 +128,7 @@ public class AdminController {
 		    return response;
 		}
 
-		// Staff Create by Admin
+	// Staff Create by Admin
 		@PostMapping("/createstaff")
 		public JsonResponseclass createStaff(@RequestBody StaffCreationRequest request, HttpSession session) {
 		    JsonResponseclass response = new JsonResponseclass();
@@ -155,63 +167,99 @@ public class AdminController {
 		    return response;
 		}
 	
-		// Update staff by Admin
-	    @PutMapping("/updatestaff/{id}")
-	    public JsonResponseclass updateStaff(@PathVariable("id") Long id, @RequestBody Staff staff, HttpSession session) {
-	        JsonResponseclass response = new JsonResponseclass();
+		// update staff by admin
+		@PutMapping("/updatestaff/{id}")
+		public JsonResponseclass updateStaff(@PathVariable("id") Long id, @RequestBody StaffCreationRequest request, HttpSession session) {
+		    JsonResponseclass response = new JsonResponseclass();
+		    
+		    // Retrieve the admin from the session
+		    Admin existingAdminFromSession = (Admin) session.getAttribute("admininstance");
 
-	        // Retrieve the admin from the session
-	        Admin existingAdminFromSession = (Admin) session.getAttribute("admininstance");
+		    // Check if the admin is logged in
+		    if (existingAdminFromSession == null) {
+		        response.setStatus("403");
+		        response.setMessage("Unauthorized: Please log in to update staff");
+		        response.setResult("unauthorized");
+		        return response;
+		    }
 
-	        // Check if the admin is logged in
-	        if (existingAdminFromSession == null) {
-	            response.setStatus("403");
-	            response.setMessage("Unauthorized: Please log in to update staff");
-	            response.setResult("unauthorized");
-	            return response;
-	        }
+		    // Check if the staff ID is valid
+		    if (id == null || id <= 0) {
+		        response.setStatus("400");
+		        response.setMessage("Bad Request: Invalid staff ID");
+		        response.setResult("id_invalid");
+		        return response;
+		    }
 
-	        // Check if the staff ID is valid
-	        if (id == null || id <= 0) {
-	            response.setStatus("400");
-	            response.setMessage("Bad Request: Invalid staff ID");
-	            response.setResult("id_invalid");
-	            return response;
-	        }
+		    // Find the existing staff member by ID
+		    Optional<Staff> existingStaffOptional = staffServiceImpl.findById(id);
 
-	        // Find the existing staff member by ID
-	        Optional<Staff> existingStaffOptional = staffServiceImpl.findById(id);
+		    if (existingStaffOptional.isPresent()) {
+		        Staff existingStaff = existingStaffOptional.get();
+		        
+		        // Update staff fields with new values from the request
+		        existingStaff.setStaffname(request.getStaff().getStaffname());
+		        existingStaff.setEmail(request.getStaff().getEmail());
+		        existingStaff.setRole(request.getStaff().getRole());
+		        existingStaff.setIsActiveStaff(request.getStaff().getIsActiveStaff());
 
-	        if (existingStaffOptional.isPresent()) {
-	            Staff existingStaff = existingStaffOptional.get();
+		        // Save the updated staff using the service implementation
+		        staffServiceImpl.updateStaff(existingStaff);
 
-	            // Update staff fields with new values
-	            existingStaff.setStaffname(staff.getStaffname());
-	            existingStaff.setEmail(staff.getEmail());
-	            existingStaff.setRole(staff.getRole());
-	            existingStaff.setIsActiveStaff(staff.getIsActiveStaff());
+		        response.setStatus("200");
+		        response.setMessage("Staff updated successfully");
+		        response.setResult("success");
+		    } else {
+		        response.setStatus("404");
+		        response.setMessage("Staff not found");
+		        response.setResult("not_found");
+		    }
 
-	            // Optionally update the password if provided
-	            if (staff.getPassword() != null && !staff.getPassword().isEmpty()) {
-	                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	                existingStaff.setPassword(passwordEncoder.encode(staff.getPassword()));
-	            }
+		    return response;
+		}
 
-	            // Save the updated staff using the service implementation
-	            staffServiceImpl.updateStaff(existingStaff);
+	// Delete Staff by Admin
+@DeleteMapping("/deletestaff/{id}")
+public JsonResponseclass deleteStaff(@PathVariable("id") Long id, HttpSession session) {
+    JsonResponseclass response = new JsonResponseclass();
 
-	            response.setStatus("200");
-	            response.setMessage("Staff updated successfully");
-	            response.setResult("success");
-	        } else {
-	            response.setStatus("404");
-	            response.setMessage("Staff not found");
-	            response.setResult("not_found");
-	        }
+    // Retrieve the admin from the session
+    Admin existingAdminFromSession = (Admin) session.getAttribute("admininstance");
 
-	        return response;
-	    }
-	
+    // Check if the admin is logged in
+    if (existingAdminFromSession == null) {
+        response.setStatus("403");
+        response.setMessage("Unauthorized: Please log in to delete staff");
+        response.setResult("unauthorized");
+        return response;
+    }
+
+    // Check if the staff ID is valid
+    if (id == null || id <= 0) {
+        response.setStatus("400");
+        response.setMessage("Bad Request: Invalid staff ID");
+        response.setResult("id_invalid");
+        return response;
+    }
+
+    // Find the existing staff member by ID
+    Optional<Staff> existingStaffOptional = staffServiceImpl.findById(id);
+
+    if (existingStaffOptional.isPresent()) {
+        staffServiceImpl.deleteSpecificStaff(id); // Assuming you have a deleteStaff method in your service
+
+        response.setStatus("200");
+        response.setMessage("Staff deleted successfully");
+        response.setResult("success");
+    } else {
+        response.setStatus("404");
+        response.setMessage("Staff not found");
+        response.setResult("not_found");
+    }
+
+    return response;
+}
+
 		
 		// Endpoint for admin login
 		@RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -279,8 +327,70 @@ public class AdminController {
 			return response;
 		}
 
+		
+		
 		public Admin findById(Long id) {
 		    return adminServiceImpl.findById(id).orElse(null);
 		}
+		
+		//reassign staff
+		 @PutMapping("/reassign-staff")
+		    public JsonResponseclass reassignStaffToClient(
+		            @RequestParam Long id,
+		            @RequestParam Long staffId,
+		            HttpSession session) {
+
+		        JsonResponseclass response = new JsonResponseclass();
+
+		        // Check if admin is logged in
+		        Admin existingAdminFromSession = (Admin) session.getAttribute("admininstance");
+		        if (existingAdminFromSession == null) {
+		            response.setStatus("403");
+		            response.setMessage("Unauthorized: Please log in to reassign staff");
+		            response.setResult("unauthorized");
+		            return response;
+		        }
+
+		        try {
+		            // Reassign the staff to the client
+		            clientService.reassignStaffToClient(id, staffId);
+
+		            response.setStatus("200");
+		            response.setMessage("Staff reassigned successfully");
+		            response.setResult("success");
+		        } catch (RuntimeException e) {
+		            response.setStatus("400");
+		            response.setMessage(e.getMessage());
+		            response.setResult("error");
+		        }
+
+		        return response;
+		    }
+		
+		
+		 @GetMapping
+		 public List<Client> getAllList(){
+			 return clientService.findAllClients();
+		 }
+		 
+		 @GetMapping("/allclient")
+		 public List<ClientDto> getAllLists() {
+		     List<Client> clients = clientService.findAllClients();
+		     List<ClientDto> clientsDto = new ArrayList<>();
+		     for (Client client : clients) {
+		         ClientDto dto = new ClientDto();
+		         dto.setClientName(client.getClientName());
+		         dto.setAddress(client.getAddress());
+		         dto.setClientPhone(client.getClientPhone());
+		         dto.setEmail(client.getEmail());
+		         dto.setId(client.getId());
+		         dto.setKycStatus(client.getKycStatus());
+		         clientsDto.add(dto);
+		     }
+		     
+		     return clientsDto; // Return type updated to List<ClientDto>
+		 }
+
+		 
 		
 }

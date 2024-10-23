@@ -21,3 +21,4 @@ public interface StaffService {
     // Method to update an existing staff member
     void updateStaff(Staff staff);
 }
+

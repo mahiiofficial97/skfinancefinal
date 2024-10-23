@@ -22,9 +22,8 @@ import lombok.Data;
 @Entity
 @Data
 public class Staff {
-	
-	
-	@Id
+    
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String staffname;
@@ -34,13 +33,12 @@ public class Staff {
     private String isActiveStaff = "Active";
     
     @Temporal(TemporalType.DATE)
-	@CreationTimestamp
+    @CreationTimestamp
     @DateTimeFormat(pattern = "dd-MM-yyyy")
-	private Date Admincreated;
+    private Date Admincreated;
 
-    
- // One Staff can have many Clients
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true) // Correctly mapped
+    // One Staff can have many Clients
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Client> clients = new ArrayList<>(); // Initialize with an ArrayList
 
     // Foreign key to link the Staff to an admin member
@@ -49,4 +47,5 @@ public class Staff {
     private Admin admin; // Admin member who created the client
 
     
+   
 }

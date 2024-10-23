@@ -29,7 +29,7 @@ public class Client {
     private String clientPhone; // Phone number of the client
     private String address;
     private String kycStatus;   
-    private String image;
+    
 
     // Foreign key to link the client to a staff member
     @ManyToOne

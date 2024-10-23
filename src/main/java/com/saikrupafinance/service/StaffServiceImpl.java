@@ -51,7 +51,7 @@ public class StaffServiceImpl implements StaffService {
 	@Override
 	public void deleteSpecificStaff(Long staffId) {
 		// TODO Auto-generated method stub
-		
+		 staffRepository.deleteById(staffId);
 	}
 
 	 @Override
@@ -68,6 +68,7 @@ public class StaffServiceImpl implements StaffService {
 	        existingStaff.setIsActiveStaff(staff.getIsActiveStaff()); // Update isActive status
 	        staffRepository.save(existingStaff);
 	    }
+
 	}
 	 
 

@@ -15,7 +15,6 @@ import com.saikrupafinance.model.Admin;
 import com.saikrupafinance.model.Client;
 import com.saikrupafinance.model.JsonResponseclass;
 import com.saikrupafinance.model.Staff;
-import com.saikrupafinance.service.AdminServiceImpl;
 import com.saikrupafinance.service.ClientService;
 import com.saikrupafinance.service.StaffServiceImpl;
 
@@ -28,8 +27,7 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @Autowired
-    private AdminServiceImpl adminServiceImpl;
+    
 
     @Autowired
     private StaffServiceImpl staffServiceImpl;
@@ -73,6 +71,34 @@ public class ClientController {
         response.setResult("unauthorized");
         return response;
     }
+@PostMapping("/update")
+public JsonResponseclass updateClient(@RequestBody Client client,
+                                      @RequestParam(required = false) Long staffId,
+                                      HttpSession session) {
+    JsonResponseclass response = new JsonResponseclass();
+
+    // Validate the session for staff
+    Staff existingStaffFromSession = (Staff) session.getAttribute("staffinstance");
+    if (existingStaffFromSession != null && staffId != null && staffId.equals(existingStaffFromSession.getId())) {
+        try {
+            clientService.updateClient(client, staffId); // Pass staff ID to the service
+            response.setStatus("200");
+            response.setMessage("Client updated successfully by Staff.");
+            response.setResult("success");
+        } catch (RuntimeException e) {
+            response.setStatus("400");
+            response.setMessage(e.getMessage());
+            response.setResult("failure");
+        }
+        return response;
+    }
+
+    // Unauthorized response if staff is not valid
+    response.setStatus("403");
+    response.setMessage("Unauthorized: Please log in as Staff to update clients.");
+    response.setResult("unauthorized");
+    return response;
+}
 
     @GetMapping("/all")
     public List<Client> getAllClients() {
