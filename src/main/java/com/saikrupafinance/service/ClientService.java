@@ -1,14 +1,20 @@
 package com.saikrupafinance.service;
 
+
+
+ import java.awt.print.Pageable;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+
 import org.springframework.stereotype.Service;
 
-import com.saikrupafinance.model.Admin;
 import com.saikrupafinance.model.Client;
 import com.saikrupafinance.model.Staff;
 import com.saikrupafinance.repository.AdminRepository;
+import com.saikrupafinance.repository.ClientRepo;
 import com.saikrupafinance.repository.ClientRepository;
 import com.saikrupafinance.repository.StaffRepository;
 
@@ -16,6 +22,10 @@ import com.saikrupafinance.repository.StaffRepository;
 public class ClientService {
 	@Autowired
     private AdminRepository adminRepository;
+	
+	@Autowired
+	private ClientRepo repo;
+	
 
     @Autowired
     private ClientRepository clientRepository;
@@ -55,7 +65,36 @@ public class ClientService {
         clientRepository.save(client);
     }
 
-    public List<Client> findAllClients() {
-        return clientRepository.findAll();
-    }
+
+    
+    
+	public Optional<Client> getclientphone(String clientPhone) {
+		return repo.findByClientPhone(clientPhone);
+		
+	}
+
+	public Optional<Client> getclientbyid(Long id) {
+		return repo.getById(id);
+		
+	}
+	
+
+
+	public Page<Client> findAllClients(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public List<Client> getAllClients()
+	{
+		return repo.findAll();
+		
+	}
+
+//	   public Page<Client> findAllClients(Pageable pageable) {
+//	        return clientRepository.findAll(pageable);
+//	    }
+	
+	
 }

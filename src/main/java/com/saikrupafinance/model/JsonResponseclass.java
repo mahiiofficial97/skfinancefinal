@@ -1,5 +1,7 @@
 package com.saikrupafinance.model;
 
+
+
 public class JsonResponseclass {
 	
 	private String status;

@@ -1,11 +1,15 @@
 package com.saikrupafinance.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,9 +39,12 @@ public class Admin {
 		private Date Admincreated;
 
 	 // One Admin can create multiple Clients
-	    @OneToMany(mappedBy = "admin") // Correctly mapped
-	    private Set<Client> clients; // Initialize with a Set if needed
+	    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	    private Set<Client> clients = new HashSet<>();
+	    
+ // Initialize with a Set if needed
 
+	    
 	
 
 }

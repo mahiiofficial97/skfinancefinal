@@ -40,6 +40,8 @@ public class Staff {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true) // Correctly mapped
     private List<Client> clients = new ArrayList<>(); // Initialize with an ArrayList
 
+	
+
 
     
 }
