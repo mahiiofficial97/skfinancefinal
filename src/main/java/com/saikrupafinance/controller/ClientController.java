@@ -1,25 +1,21 @@
 package com.saikrupafinance.controller;
 
-import java.awt.print.Pageable;
+
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.saikrupafinance.dto.JsonResponseclass;
 import com.saikrupafinance.model.Admin;
 import com.saikrupafinance.model.Client;
-import com.saikrupafinance.model.JsonResponseclass;
 import com.saikrupafinance.model.Staff;
-import com.saikrupafinance.service.AdminServiceImpl;
 import com.saikrupafinance.service.ClientService;
 import com.saikrupafinance.service.StaffServiceImpl;
 
@@ -32,8 +28,7 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @Autowired
-    private AdminServiceImpl adminServiceImpl;
+    
 
     @Autowired
     private StaffServiceImpl staffServiceImpl;
@@ -77,82 +72,37 @@ public class ClientController {
         response.setResult("unauthorized");
         return response;
     }
+@PostMapping("/update")
+public JsonResponseclass updateClient(@RequestBody Client client,
+                                      @RequestParam(required = false) Long staffId,
+                                      HttpSession session) {
+    JsonResponseclass response = new JsonResponseclass();
 
-    
-    //get the 
+    // Validate the session for staff
+    Staff existingStaffFromSession = (Staff) session.getAttribute("staffinstance");
+    if (existingStaffFromSession != null && staffId != null && staffId.equals(existingStaffFromSession.getId())) {
+        try {
+            clientService.updateClient(client, staffId); // Pass staff ID to the service
+            response.setStatus("200");
+            response.setMessage("Client updated successfully by Staff.");
+            response.setResult("success");
+        } catch (RuntimeException e) {
+            response.setStatus("400");
+            response.setMessage(e.getMessage());
+            response.setResult("failure");
+        }
+        return response;
+    }
+
+    // Unauthorized response if staff is not valid
+    response.setStatus("403");
+    response.setMessage("Unauthorized: Please log in as Staff to update clients.");
+    response.setResult("unauthorized");
+    return response;
+}
+
     @GetMapping("/all")
     public List<Client> getAllClients() {
-        return clientService.getAllClients();
+        return clientService.findAllClients();
     }
-    
-    
-    //adin get the client by mobile number
-    @GetMapping("/getone/{clientPhone}")
-	public Client getShopById(@PathVariable String clientPhone) {
-
-		Optional<Client> data = clientService.getclientphone(clientPhone);
-
-		if (data.isPresent()) {
-			return data.get();
-		}
-		throw new RuntimeException("Data not present" + clientService);
-	}
-    
-    
-//    @GetMapping("/allpage")
-//    public Page<Client>getAllClients(Pageable pageable) {
-//        return clientService.findAllClients();
-//    }
-
-    // Get all clients with pagination
-//    @GetMapping("/allpage")
-//    public Page<Client> getAllClientsPaged(
-//            @PageableDefault(page = 0, size = 5) Pageable pageable) {
-//        return clientService.findAllClients(pageable);
-//    }
-
-    
-    
-    
-    
-    @PutMapping("/updatedata/{id}")
-	public JsonResponseclass updatedata(@RequestBody Client client1, @PathVariable Long id) {
-		JsonResponseclass responce = new JsonResponseclass();
-		Optional<Client> ids = clientService.getclientbyid(id);
-
-		if (ids.isPresent()) {
-
-			Client client = ids.get();
-
-			client.setClientName(client1.getClientName());
-			client.setEmail(client1.getEmail());
-			client.setClientName(client1.getClientName());
-			client.setClientPhone(client1.getClientPhone());
-			client.setAddress(client1.getAddress());
-
-			clientService.createClient(client);
-			responce.setMessage("client updated Sucessfully with id=");
-			responce.setStatus("200OK");
-			responce.setResult("Success");
-		} else {
-			responce.setStatus("400OK");
-			responce.setResult("UnSuccessful");
-			responce.setMessage("id is not present!!");
-		}
-
-		return responce;
-	}
-
-    
-    @GetMapping
-    public Page<Client> getAllClients(Pageable pageable) {
-        return clientService.findAllClients(pageable);
-    }
-//    
-//    @GetMapping
-//    public PaginatedResponse<Client> getAllClients1(Pageable pageable) {
-//        Page<Client> clientsPage = clientService.findAllClients(pageable);
-//        return new PaginatedResponse<>(clientsPage);
-//    }
-//    
-    }
+}

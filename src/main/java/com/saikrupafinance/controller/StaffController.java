@@ -2,7 +2,6 @@ package com.saikrupafinance.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.saikrupafinance.model.JsonResponseclass;
+import com.saikrupafinance.dto.JsonResponseclass;
 import com.saikrupafinance.model.Staff;
 import com.saikrupafinance.service.StaffServiceImpl;
 
@@ -60,7 +59,7 @@ public class StaffController {
 			response.setMessage("Session already expired or logged out");
 			response.setResult("failure");
 		} else {
-			session.removeAttribute("admininstance");
+			session.removeAttribute("staffinstance");
 			response.setStatus("200");
 			response.setMessage("Logout successfully");
 			response.setResult("success");
@@ -69,5 +68,6 @@ public class StaffController {
 		return response;
 	}
    
+
 
 }

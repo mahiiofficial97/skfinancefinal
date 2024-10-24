@@ -43,6 +43,16 @@ public class StaffServiceImpl implements StaffService {
 	 public Staff findByEmail(String email) {
 			return staffRepository.findByEmail(email) ;
 		}
+
+	public void deleteSpecificStaff(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void updateStaff(Staff existingStaff) {
+		// TODO Auto-generated method stub
+		
+	}
 	 }
 
 	 

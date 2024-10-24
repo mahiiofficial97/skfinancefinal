@@ -43,24 +43,9 @@ public class AdminServiceImpl  implements AdminService{
 	}
 
 	@Override
-	public void deleteAllAdmins() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteSpecificAdmin(Long id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public List<Admin> findAllAdmins() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	
-
-	
 }
