@@ -61,6 +61,7 @@ public class ClientService {
     public Optional<Client> findById(Long id) {
         return clientRepository.findById(id);
     }
+    
     public void updateClient(Client client, Long staffId) {
         // Check if the client exists
         if (client.getId() == null) {
@@ -92,9 +93,6 @@ public class ClientService {
     }
     
     
-    
-    
-    
     // reassign part
     public void reassignStaffToClient(Long id, Long staffId) {
         // Fetch the client by ID
@@ -116,5 +114,11 @@ public class ClientService {
         // Save the updated client entity
         clientRepository.save(client);
     }
+    
+    //get client by mobile
+    public Optional<Client> getclientphone(String clientPhone) {
+		return clientRepository.findByClientPhone(clientPhone);
+		
+	}
 
 }

@@ -17,8 +17,5 @@ public interface StaffService {
 
     // Method to delete a specific staff member by their ID
     void deleteSpecificStaff(Long staffId);
-
-    // Method to update an existing staff member
-    void updateStaff(Staff staff);
 }
 
