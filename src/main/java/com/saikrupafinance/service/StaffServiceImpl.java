@@ -5,10 +5,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.saikrupafinance.model.Admin;
-import com.saikrupafinance.model.Client;
+
 import com.saikrupafinance.model.Staff;
 import com.saikrupafinance.repository.StaffRepository;
+
+
 
 
 
@@ -45,4 +46,3 @@ public class StaffServiceImpl implements StaffService {
 	 }
 
 	 
-

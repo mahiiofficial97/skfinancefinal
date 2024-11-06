@@ -29,7 +29,7 @@ public class Client {
     private String clientPhone; // Phone number of the client
     private String address;
     private String kycStatus;   
-    private String image;
+    
 
     // Foreign key to link the client to a staff member
     @ManyToOne
@@ -38,8 +38,9 @@ public class Client {
 
     // Foreign key to link the client to an admin member
     @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = true) // Can be null
-    private Admin admin; // Admin member who created the client
+    @JoinColumn(name = "admin_id")
+    private Admin admin;
+    // Admin member who created the client
 
     @Temporal(TemporalType.DATE)
     @CreationTimestamp

@@ -1,5 +1,9 @@
 package com.saikrupafinance.service;
 
+
+
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.saikrupafinance.model.Admin;
+
 import com.saikrupafinance.repository.AdminRepository;
 
 
@@ -29,11 +34,7 @@ public class AdminServiceImpl  implements AdminService{
 		return adminRepository.findByEmail(email) ;
 	}
 
-	@Override
-	public List<Admin> findAllAdmins() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public Optional<Admin> findById(Long id) {
@@ -52,6 +53,14 @@ public class AdminServiceImpl  implements AdminService{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public List<Admin> findAllAdmins() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 
 	
 }
